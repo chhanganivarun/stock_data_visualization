@@ -1,0 +1,12 @@
+2016/10/23
+
+11:14am, Jie Ma
+
+
+I downloaded the data for apple. You can see them in the `appl' folder. It contains two subfolders. The subfolder `individual' contains 4 csv files, that are for Income Statement, Balance Sheet, CashFlow and Financial Ratios, respectively. In the subfolder `combined', I basically just combine all the 4 files into one big csv. There are two such files, and the one called `appcol' is the one that is the transpose of the csv file `all'. Of course, this can be done easily, but I am just wondering which one should be easier to use.
+
+Or, I am wondering whether we should use individual csv files, or use combined files. You decide. 
+
+Let's keep in contact through this diary. Every time we update things, or want to communicate with the other one, write things down in this file.
+
+ 
