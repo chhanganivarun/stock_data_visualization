@@ -1,0 +1,34 @@
+Title: Stock Data Visualization
+
+
+1. Background and Motivation: Since one of the authors is going take the CFA (Chartered Financial Analyst) level I exam, he is in the process of learning lots of financial knowledge and wants to undertake such a task to implement what he learns in the visualization class in the subject of shareholder's equity, that is, stock. As a common knowledge that there are tons of definitions and terminologies in the subject of Finace, however, since the other author also finds the subject fascinating, and in the mean time, he has a deep background in Physics, he has no difficulty in understanding all these new terms in a very short amount of time so we agree to touch upon such a field that might seem new to us, but we certainly want to take such a challenge. 
+
+2. Project Objectives: The primary question we want to answer are the following:
+
+(1) Which stock(s) outperform(s) in the past? 
+
+(2) Which stock(s) are undervalued in the past and should be recommended for buying for investors? 
+
+(3) Which ones should investors avoid buying even though they shined in the past?
+
+(4) What attribute(s) affect the trend of the each stock in the stock market most, or least? How could we use them in future prediction?
+
+(5) Is stock, in general, at this moment, or say in this era, a good option indeed for investment? Or people should not waste any of their money in this
+market and instead should be directed to invest in risk-free secirities, such as U.S treasury bonds?
+
+(6) There are two types of analysis to analyze the performance of any individual stock. The first is "technical" analysis. Investors will dierctly look at the price of the stock and its trend to determine whether or not, and when he should buy or sell the stock. The validity of this method is based on `efficient market hypothesis', which says that all the information of the underlying company of the stock is 100% percent encoded in the price of its stock. The second method is termed "fundamental analysis", and people who use this method will not look at the stock price directly; instead, they examine the financial statements of the company to determine it performance. By financial statements, we basically mean the following three tables: Income statement table, Balance Sheet Table and Cash Flow Table. The validity of this method is based on the hypothesis that the market is inefficient, that it is unable to fully reflect the performance of the underlying company. A direct implication of this hypothesis is that many stocks are either underevaluated or overperformed by only looking at their price.
+
+In this visualization, one goal we may achieve is that whether the trend of the financial statements follow the trend of the price of the stock? Which attributes from the financial statements follow well and which do not at all? This will help us determine which factor we may look at in advance in those tables to decide which stock(s) we should buy or sell. 
+
+
+3. Features of the data to be presented in the visualization:
+
+We discuss here features of the data that we intend to present in the visualization. 
+
+(1)`Technical Analysis' Attributes: First of all, for each stock,  we present its history stock price in a certain amount of time. For example, we have the daily stock price for Apple and we may show that for 6 months, or a quarter, depending on needs. The analysis of the stock price itself is the called "Technical Analysis". 
+
+(2) `Fundamental Analysis' Attributes: Other than the stock price itself, which is a direct measurement of the performance of each individual stock, we also have features (items) from the Income statement, CashFlow statement and Balance Sheet, which are documents that are very crucial to investors in deciding the position (long or short) in the stock being considered. The Analysis of these three tables is what is called "Fundamental Analysis". These documents reveal the real undelying performance, including producing, operating, selling, financing and administrative capabilities of the company by looking at certain financial statistics in those three tables over the past. For example, in the income statement, an strong decrease in Accounts Receivable (the amount of money that shouldbe or will be received in the future due to the agreement of a corresponding service provided to the customer but will not be collected in the present period. Such a delay could be due to the fact that the customer will pay on credit card.) and a strong increase in inventory is an indicator that there are unignorable issues in the selling capability of the company .On the investor's side, if this happens constantly, and there is no imformation regarding whether the firm is going to update their products to meet better the taste of customers, then investor should start thinking about selling their equities in this firm to avoid future loss, even thouth currently, the stock price might still remain high for a certain amount of time. 
+
+(3) Specifically, we would consider attributes of the following:
+
+   (a) Total Revenue, Cost of Revenue, Gross Profit, Research Expense, Income tax and Net Income from the Income Statment Table. 
