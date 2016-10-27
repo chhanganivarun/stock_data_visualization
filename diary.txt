@@ -15,6 +15,10 @@ Let's keep in contact through this diary. Every time we update things, or want t
 
 AS we discussed with members from other teams, they suggest that it is more important to compare stock price with SP500 or DJones, which will show the contrast between two trends or consistency of the two trends. We also need to find a webpage for as our template such that the page doesn't look weird. We might add a radar map, which has 5 attributes for the company that is selected. We might just add this radar map to the recommendation section (svg) as we give advice on whether the selected stock should be bought or not, as the stock is selected.
 
+2016/10/27: Jie Ma, 17:16 pm
+
+I claimed the items (attributes) that we might need to use for A stock in china in the file called "toextract.txt". I git pushed it. Please check it.
+
 
 
  
