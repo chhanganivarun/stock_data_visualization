@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization - Project</title>
+    <link rel="stylesheet" href="public/css/style.css"/>
+    <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
+    <script type="text/javascript" src="bower_components/d3/d3.js"></script>
+    <script type="text/javascript" src="bower_components/d3-tip/index.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.9.0/d3-legend.js"></script>
+    <script src="http://techanjs.org/techan.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+</head>
+
+<body>
+
+<h1>Stock Data Visualization</h1>
+<ul class="info">
+    <li>Name: Jian Lan; E-Mail: jiann.lan@cosmic.utah.edu E-Mail; UID: u0752670</li>
+    <li>Name: Jie Ma; E-Mail: xxxxxxxxx@math.utah.edu E-Mail; UID: u07XXXXX</li>
+</ul>
+<div id="index-of-SP500-chart" class="view">
+</div>
+
+
+<div id = "two-stocks" class = "view">
+    <div id="comparison-chart" class="view">
+        <div id="plot-selector-0">
+            <label>Ticker-1:</label>
+            <select id="dataset-0"></select>
+        </div>
+
+        <div id="plot-selector-1">
+            <label>Ticker-2:</label>
+            <select id="dataset-1"></select>
+        </div>
+
+        <div id="chart-type-selector">
+            <label>Chart Type:</label>
+            <select id="types">
+                <option selected value="line-charts">line charts</option>
+                <option value="line-chart">line chart</option>
+                <option value="stacked-chart">stacked chart</option>
+            </select>
+        </div>
+
+        <div>
+            <svg width="500" height="400" id="leftChart">
+                <!--<g id="xAxis-l"></g>-->
+                <!--<g id="yAxis-l"></g>-->
+            </svg>
+
+            <svg width="500" height="400" id="rightChart">
+                <!--<g id="xAxis-r"></g>-->
+                <!--<g id="yAxis-r"></g>-->
+            </svg>
+        </div>
+    </div>
+</div>
+
+
+<div id = "votes-percentage" class = "view">
+</div>
+
+<div id = "tileChart" class = "view">
+    <div id="legend" class = "view"></div>
+    <div id = "tiles" class = "view"></div>
+</div>
+
+<script type="application/javascript" src="public/js/tileChart.js"></script>
+<script type="application/javascript" src="public/js/singleStockPriceChart.js"></script>
+<script type="application/javascript" src="public/js/indexOfSPChart.js"></script>
+<script type="application/javascript" src="public/js/votePercentageChart.js"></script>
+<script type="application/javascript" src="public/js/shiftChart.js"></script>
+<script type="application/javascript" src="public/js/main.js"></script>
+</body>
+</html>
