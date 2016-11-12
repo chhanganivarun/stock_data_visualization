@@ -60,12 +60,18 @@ SingleStockPriceChart.prototype.init = function()
             + self.margin.left
             + ', ' + self.margin.top + ')');
 
-    // Add the valueline path.
-    self.line = self.svg.append("path")
+    // Add path.
+    self.line = self.svg.append('g')
         .attr("class", "line")
-        // .attr("d", self.valueline(dailyStockPrice))
+        .append("path")
         .style('fill', 'none')
         .style('stroke', 'steelblue');
+
+    // Add bar group.
+    self.barsGroup = self.svg.append('g')
+        .attr("class", "bars");
+        // .style('fill', 'none')
+        // .style('stroke', 'steelblue');
 
     // Add the X Axis
     self.svg.append("g")
@@ -118,7 +124,33 @@ SingleStockPriceChart.prototype.update = function(dailyStockPrice, chartType)
     if (chartType === 'line-charts') {
         self.line.attr("d", self.valueline(dailyStockPrice));
     } else {
-        // self.svg.select('path').remove()
+        self.barsGroup
+            .selectAll('rect')
+            .data(dailyStockPrice);
+            // .attr('transform', 'translate(' + xAxisWidth + ', ' + 0 + ')')
+
+        bars = bars.enter().append('rect').merge(bars);
+
+        bars
+            .transition().duration(2000)
+            .attr('x', function (d) {
+                return d.Date
+            })
+            .attr('y', function (d) {
+                return yScale(d[selectedDimension])
+            })
+            .attr('width', width)
+            .attr('height', function (d) {
+                return hCore - yScale(d[selectedDimension])
+            })
+            .style('fill', function (d) {
+                var self = d3.select(this);
+                if (!self.classed('selected')) {
+                    return colorScale(d[selectedDimension]);
+                } else {
+                    return '#d20a11'; // TODO: Try to remove the hard code.
+                }
+            });
     }
 
 };
