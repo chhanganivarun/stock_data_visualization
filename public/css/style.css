@@ -131,6 +131,7 @@ h2{
     border-radius: 10px;
     pointer-events: none;
 }
+
 .tooltip-title{
     font-size:18px;
     font-family: "Arial Black";
@@ -186,4 +187,11 @@ h2{
 h3{
     text-anchor:middle;
     font-size: 32px;
+}
+
+/* ------------------ */
+
+.focus circle {
+    fill: none;
+    stroke: red;
 }

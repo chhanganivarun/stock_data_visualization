@@ -5,7 +5,7 @@
 function ShiftChart(){
     var self = this;
     self.init();
-};
+}
 
 /**
  * Initializes the svg elements required for this chart;

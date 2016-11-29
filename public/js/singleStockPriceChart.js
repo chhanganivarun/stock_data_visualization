@@ -22,10 +22,10 @@ SingleStockPriceChart.prototype.init = function()
     //Gets access to the div element created for this chart from HTML
     var divelectoralVotes = d3.select("#two-stocks").classed("content", true);
     self.svgBounds = divelectoralVotes.node().getBoundingClientRect();
-    console.log(self.svgBounds);
-    console.log(self.svgBounds.width);
+    // console.log(self.svgBounds);
+    // console.log(self.svgBounds.width);
     self.svgWidth = self.svgBounds.width - self.margin.left - self.margin.right;
-    console.log(self.svgWidth);
+    // console.log(self.svgWidth);
     self.svgHeight = 150;
 
     //creates svg element within the div
@@ -161,7 +161,7 @@ SingleStockPriceChart.prototype.chooseData = function()
     var self = this;
     var ticker = document.getElementById('dataset-'+self.i).value;
     var chartType = document.getElementById('types').value;
-    console.log(chartType);
+    // console.log(chartType);
 
     d3.text('data/daily/table_'+ticker+'.csv', function(error, text) {
         // Date	Open	High	Low	Close	Adj Close*	Volume
