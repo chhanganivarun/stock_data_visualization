@@ -2,8 +2,10 @@
  * Root file that handles instances of all the charts and loads the visualization
  */
 
-var firstStockPriceChart = new SingleStockPriceChart(0);
-var secondStockPriceChart = new SingleStockPriceChart(1);
+// var firstStockPriceChart = new SingleStockPriceChart(0);
+// var secondStockPriceChart = new SingleStockPriceChart(1);
+
+// var stockPriceChart = new SingleStockPriceChart();
 
 (function(){
     var instance = null;
@@ -23,11 +25,12 @@ var secondStockPriceChart = new SingleStockPriceChart(1);
             indexOfSnP500Chart.update();
         });
 
+        var singleStockPricesChart = new SingleStockPricesChart();
+
         d3.text('data/tickers.txt',
             function(error, content)
             {
                 var tickers = content.split('\n').map(function (d) { return d.trim(); });
-
                 var defaultOptionName = ['aapl', 'goog'];
 
                 var i;
@@ -39,11 +42,37 @@ var secondStockPriceChart = new SingleStockPriceChart(1);
                         .text(function(d) { return d; })
                         .property("selected",
                             function(d) { return defaultOptionName[i] === d; });
+
                 }
 
-                d3.select('#dataset-0').attr('onchange', 'firstStockPriceChart.chooseData()');
-                d3.select('#dataset-1').attr('onchange', 'secondStockPriceChart.chooseData()');
+                // singleStockPricesChart.update('appl', 'goog', 'line-chart');
+
+                d3.select('#dataset-0').on('change', function() {singleStockPricesChart.chooseData();});
+                d3.select('#dataset-1').on('change', function() {singleStockPricesChart.chooseData();});
             });
+
+        // d3.text('data/tickers.txt',
+        //     function(error, content)
+        //     {
+        //         var tickers = content.split('\n').map(function (d) { return d.trim(); });
+        //         var defaultOptionName = ['aapl', 'goog'];
+        //
+        //         var i;
+        //         for (i in defaultOptionName) {
+        //             d3.select('#plot-selector-'+i).select('#dataset-'+i)
+        //                 .selectAll('option').data(tickers)
+        //                 .enter().append('option')
+        //                 .attr('value', function(d) { return d; })
+        //                 .text(function(d) { return d; })
+        //                 .property("selected",
+        //                     function(d) { return defaultOptionName[i] === d; });
+        //
+        //             // d3.select('#dataset-'+i).attr('onchange', 'stockPriceChart.chooseData(' +i+ ')');
+        //         }
+        //
+        //         // d3.select('#dataset-0').attr('onchange', 'firstStockPriceChart.chooseData()');
+        //         // d3.select('#dataset-1').attr('onchange', 'secondStockPriceChart.chooseData()');
+        //     });
     }
 
     /**

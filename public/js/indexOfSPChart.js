@@ -6,7 +6,6 @@
 function IndexOfSPChart(indexOfSnP500Data)
 {
     var self = this;
-
     self.indexOfSnP500Data = indexOfSnP500Data;
     self.init();
 }
@@ -17,7 +16,7 @@ function IndexOfSPChart(indexOfSnP500Data)
 IndexOfSPChart.prototype.init = function()
 {
     var self = this;
-    self.margin = {top: 10, right: 20, bottom: 30, left: 50};
+    self.margin = {top: 10, right: 100, bottom: 30, left: 100};
     var divyearChart = d3.select("#index-of-SP500-chart").classed("fullView", true);
 
     //Gets access to the div element created for this chart from HTML
@@ -25,10 +24,10 @@ IndexOfSPChart.prototype.init = function()
     self.svgWidth = self.svgBounds.width - self.margin.left - self.margin.right;
     self.svgHeight = 200;
 
-    //creates svg element within the div
     self.svg = divyearChart.append('svg')
-        .attr('width', self.svgWidth)
-        .attr('height', self.svgHeight);
+        // .attr('width', self.svgWidth +  self.margin.left + self.margin.right)
+        .attr('width', self.svgWidth +  self.margin.left) // changed for 'focus'
+        .attr('height', self.svgHeight + self.margin.top + self.margin.bottom);
 };
 
 /**
@@ -40,7 +39,8 @@ IndexOfSPChart.prototype.update = function()
 
     // Parse the time of the pattern yyyy-mm-dd
     var parseDate = d3.timeParse('%Y-%m-%d'),
-        bisectDate = d3.bisector(function(d) { return d.Date; }).left;
+        bisectDate = d3.bisector(function(d) { return d.Date; }).left,
+        legendFormat = d3.timeFormat('%Y-%m-%d');
 
 
     self.indexOfSnP500Data.forEach(function(d) {
@@ -48,6 +48,7 @@ IndexOfSPChart.prototype.update = function()
         d.Close = +d.Close;
     });
 
+    // sort for x.invert
     self.indexOfSnP500Data.sort(function(a, b) {
         return a.Date - b.Date;
     });
@@ -55,42 +56,60 @@ IndexOfSPChart.prototype.update = function()
     // Set the ranges
     var x = d3.scaleTime()
         .range([0, self.svgWidth])
-        .domain(d3.extent(self.indexOfSnP500Data, function(d) { return d.Date; }));
+        .domain(d3.extent(self.indexOfSnP500Data, function(d) { return d.Date; })),
 
-    var y = d3.scaleLinear()
+        y = d3.scaleLinear()
         .range([self.svgHeight, 0])
         .domain(d3.extent(self.indexOfSnP500Data, function(d) { return d.Close; }));
 
-    var xAxis = d3.axisBottom(x).ticks(23);
-    var yAxis = d3.axisLeft(y).ticks(5);
+    // var xAxis = d3.axisBottom(x).ticks(23);
+    // var yAxis = d3.axisLeft(y).ticks(5);
+    var xAxis = d3.axisBottom(x),
+        yAxis = d3.axisLeft(y);
 
     var valueLine = d3.line()
         .x(function(d) { return x(d.Date); })
         .y(function(d) { return y(d.Close); });
 
-    self.svg
-        .attr('width', self.svgWidth + self.margin.left + self.margin.right)
-        .attr('height', self.svgHeight + self.margin.top + self.margin.bottom);
+    var mainPart = self.svg.append('g').attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
 
-    // Add the valueLine path.
-    self.svg.append('path')
+    mainPart.append('path')
         .attr('class', 'line')
         .attr('d', valueLine(self.indexOfSnP500Data))
         .style('fill', 'none')
         .style('stroke', 'steelblue');
 
     // Add the X Axis
-    self.svg.append('g')
+    mainPart.append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + self.svgHeight + ')')
         .call(xAxis);
 
     // Add the Y Axis
-    self.svg.append('g')
+    mainPart.append('g')
         .attr('class', 'y axis')
         .call(yAxis);
 
-    var focus = self.svg.append('g')
+
+    var legend = mainPart.append('g')
+        .attr('class', 'SP_legend')
+        .attr('width', self.svgWidth)
+        .attr('height', 30)
+        .attr('transform', 'translate(' + self.margin.left + ', 10)');
+
+    legend.append('text')
+        .attr('class', 'chart_Name')
+        .text('S&P 500');
+
+    var helper = mainPart.append('g')
+        .attr('class', 'chart_price')
+        .style('text-anchor', 'end')
+        .attr('transform', 'translate(' + self.svgWidth + ', 100)');
+
+    var helperText = helper.append('text');
+
+
+    var focus = mainPart.append('g')
         .attr('id', 'focus-0')
         .attr('class', 'focus')
         .style('display', 'none');
@@ -106,11 +125,13 @@ IndexOfSPChart.prototype.update = function()
         .on('mousemove', mouseMoveF);
 
     function mouseMoveF() {
-        var x0 = x.invert(d3.mouse(this)[0]),
+        var x0 = x.invert(d3.mouse(this)[0] - self.margin.left),
             i = bisectDate(self.indexOfSnP500Data, x0, 1),
             d0 = self.indexOfSnP500Data[i - 1],
             d1 = self.indexOfSnP500Data[i],
             d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
         focus.attr('transform', 'translate(' + x(d.Date) + ',' + y(d.Close) + ')');
+
+        helperText.text(legendFormat(d.Date) + ' - Price: ' + d.Close);
     }
 };

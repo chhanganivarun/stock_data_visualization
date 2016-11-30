@@ -9,7 +9,7 @@
     <script type="text/javascript" src="bower_components/d3/d3.js"></script>
     <script type="text/javascript" src="bower_components/d3-tip/index.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.9.0/d3-legend.js"></script>
-    <script src="http://techanjs.org/techan.min.js"></script>
+    <script type="text/javascript" src="http://techanjs.org/techan.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 </head>
@@ -27,69 +27,34 @@
 
 <div id = "two-stocks" class = "view">
     <div id="comparison-chart" class="view">
-        <div id="plot-selector-0">
-            <label>Ticker-1:</label>
-            <select id="dataset-0"></select>
+        <div id="selectors">
+            <div id="plot-selector-0">
+                <label>Ticker-1:</label>
+                <select id="dataset-0"></select>
+            </div>
+
+            <div id="plot-selector-1">
+                <label>Ticker-2:</label>
+                <select id="dataset-1"></select>
+            </div>
+
+            <div id="chart-type-selector">
+                <label>Chart Type:</label>
+                <select id="types">
+                    <option selected value="line-charts">line charts</option>
+                    <option value="line-chart">line chart</option>
+                    <option value="stacked-chart">stacked chart</option>
+                </select>
+            </div>
         </div>
-
-        <div id="plot-selector-1">
-            <label>Ticker-2:</label>
-            <select id="dataset-1"></select>
-        </div>
-
-        <div id="chart-type-selector">
-            <label>Chart Type:</label>
-            <select id="types">
-                <option selected value="line-charts">line charts</option>
-                <option value="line-chart">line chart</option>
-                <option value="stacked-chart">stacked chart</option>
-            </select>
-        </div>
-
-        <div>
-            <svg width="500" height="400" id="leftChart">
-            </svg>
-
-            <svg width="500" height="400" id="rightChart">
-            </svg>
-        </div>
-
-        <div>
-            <table>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Year</th>
-                    <th>current ratio</th>
-                    <th>quick ratio</th>
-                    <th>gross margin</th>
-                    <th>profit margin</th>
-                    <th>operating margin</th>
-                </tr>
-                <!--<tr>-->
-                    <!--<td>appl</td>-->
-                    <!--<td>2016</td>-->
-                    <!--<td>$100</td>-->
-                <!--</tr>-->
-            </table>
-
-            <table>
-                <tr>
-                    <th>Ticker</th>
-                    <th>Year</th>
-                    <th>current ratio</th>
-                    <th>quick ratio</th>
-                    <th>gross margin</th>
-                    <th>profit margin</th>
-                    <th>operating margin</th>
-                </tr>
-                <!--<tr>-->
-                    <!--<td>goog</td>-->
-                    <!--<td>2016</td>-->
-                    <!--<td>$100</td>-->
-                <!--</tr>-->
-            </table>
-        </div>
-
+        <svg width="500" height="800" id="stock-prices">
+            <g id="appl">
+                <path></path>
+            </g>
+            <g id="goog">
+                <path></path>
+            </g>
+        </svg>
     </div>
 </div>
 

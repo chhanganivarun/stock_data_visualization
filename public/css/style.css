@@ -195,3 +195,9 @@ h3{
     fill: none;
     stroke: red;
 }
+
+
+.price line {
+    /*fill: none;*/
+    stroke: steelblue;
+}
