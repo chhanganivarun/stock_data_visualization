@@ -437,40 +437,29 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                 .attr("id", function(d,i) { return "bar" + i.toString() });
 
 
-// We next append texts above bars to indicate their exact values //
-// Create the data for all the texts to read //
-            data_to_read=[];
-
-            for (var i=0; i < 10; i++) {
-                if (data_combined[i][statementType]!=undefined){
-                    data = data_combined[i][statementType];
-                } else {
-                    data = "NA"
-                }
-
-                data_to_read.push(data);
-            }
-            // console.log(data_to_read);
-
-// Create all the above bars texts
+            // Create all the above bars texts
             var above_bars_texts = statements_svg.select("#texts").selectAll("text")
-                .data(data_to_read);
+                .data(data_combined.map(function(d) {
+                    return d[statementType] === undefined ? 'NA' : d[statementType];
+                }));
 
-// Now merge
+            // Now merge
             above_bars_texts = above_bars_texts.enter()
                 .append("text")
                 .attr("y", svg_height - xAxisWidth)
                 .attr("x", function(d,i){
-                    if (i%2==0){return  1/8* each_bar_width+ tick_position_increment*(i/2+1)-(each_bar_width- initial_position_increment)}
-                    else {return 1/8* each_bar_width+tick_position_increment*(i+1)/2+initial_position_increment}
+                    if (i%2 == 0) {
+                        return  1/8* each_bar_width+ tick_position_increment*(i/2+1)-(each_bar_width- initial_position_increment);
+                    } else {
+                        return 1/8* each_bar_width+tick_position_increment*(i+1)/2+initial_position_increment;
+                    }
                 })
                 .merge(above_bars_texts);
 
-// Now exit and remove //
+            // Now exit and remove //
             above_bars_texts.exit().remove();
 
-
-// Set texts's attributes //
+            // Set texts's attributes //
             x_left_adjustment_ratio = 1/12;
             above_bars_texts
                 .attr("class", "abovebarstexts")
@@ -486,17 +475,10 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                         return x_left_adjustment_ratio* each_bar_width+tick_position_increment*(i+1)/2+initial_position_increment;
                     }
                 })
-                .attr('y', function (d,i) {
-                    if (isNaN(d)){return (svg_height- xAxisWidth) *2/3 }
-                    else {
-                        if (d<0) {return svg_height - xAxisWidth}
-
-                        else {
-                            position = svg_height - xAxisWidth - d/(y_extension*maxValue)*(svg_height-xAxisWidth);
-                            return position
-                        }
-
-                    }
+                .attr('y', function (d) {
+                    if      (isNaN(d)) { return (svg_height- xAxisWidth) *2/3; }
+                    else if (d < 0)    { return svg_height - xAxisWidth; }
+                    else               { return svg_height - xAxisWidth - d/(y_extension*maxValue)*(svg_height-xAxisWidth); } // position
                 })
                 .style("fill", function(d,i){
                     if      (isNaN(d)) { return "gray"; }
