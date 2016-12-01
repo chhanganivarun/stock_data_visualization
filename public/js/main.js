@@ -49,30 +49,10 @@
 
                 d3.select('#dataset-0').on('change', function() {singleStockPricesChart.chooseData();});
                 d3.select('#dataset-1').on('change', function() {singleStockPricesChart.chooseData();});
-            });
+                d3.select('#types').on('change', function() {singleStockPricesChart.chooseData();});
 
-        // d3.text('data/tickers.txt',
-        //     function(error, content)
-        //     {
-        //         var tickers = content.split('\n').map(function (d) { return d.trim(); });
-        //         var defaultOptionName = ['aapl', 'goog'];
-        //
-        //         var i;
-        //         for (i in defaultOptionName) {
-        //             d3.select('#plot-selector-'+i).select('#dataset-'+i)
-        //                 .selectAll('option').data(tickers)
-        //                 .enter().append('option')
-        //                 .attr('value', function(d) { return d; })
-        //                 .text(function(d) { return d; })
-        //                 .property("selected",
-        //                     function(d) { return defaultOptionName[i] === d; });
-        //
-        //             // d3.select('#dataset-'+i).attr('onchange', 'stockPriceChart.chooseData(' +i+ ')');
-        //         }
-        //
-        //         // d3.select('#dataset-0').attr('onchange', 'firstStockPriceChart.chooseData()');
-        //         // d3.select('#dataset-1').attr('onchange', 'secondStockPriceChart.chooseData()');
-        //     });
+                d3.select('#statementsSelect').on('change', function() {singleStockPricesChart.chooseData();});
+            });
     }
 
     /**

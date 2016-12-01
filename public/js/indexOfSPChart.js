@@ -27,7 +27,7 @@ IndexOfSPChart.prototype.init = function()
     self.svg = divyearChart.append('svg')
         // .attr('width', self.svgWidth +  self.margin.left + self.margin.right)
         .attr('width', self.svgWidth +  self.margin.left) // changed for 'focus'
-        .attr('height', self.svgHeight + self.margin.top + self.margin.bottom);
+        .attr('height', self.svgHeight + self.margin.top + self.margin.bottom)
 };
 
 /**
@@ -60,7 +60,7 @@ IndexOfSPChart.prototype.update = function()
 
         y = d3.scaleLinear()
         .range([self.svgHeight, 0])
-        .domain(d3.extent(self.indexOfSnP500Data, function(d) { return d.Close; }));
+        .domain([0, d3.max(self.indexOfSnP500Data.map(function(d) { return d.Close; }))]);
 
     // var xAxis = d3.axisBottom(x).ticks(23);
     // var yAxis = d3.axisLeft(y).ticks(5);
@@ -71,13 +71,22 @@ IndexOfSPChart.prototype.update = function()
         .x(function(d) { return x(d.Date); })
         .y(function(d) { return y(d.Close); });
 
+
+    var zeroLine = d3.line()
+        .x(function(d) { return x(d.Date); })
+        .y(function() { return y(0); });
+
     var mainPart = self.svg.append('g').attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
 
-    mainPart.append('path')
+    self.price = mainPart.append('path')
         .attr('class', 'line')
-        .attr('d', valueLine(self.indexOfSnP500Data))
+        .attr('d', zeroLine(self.indexOfSnP500Data))
         .style('fill', 'none')
         .style('stroke', 'steelblue');
+
+    self.price
+        .transition().duration(3000)
+        .attr('d', valueLine(self.indexOfSnP500Data));
 
     // Add the X Axis
     mainPart.append('g')
