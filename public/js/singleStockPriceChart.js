@@ -51,14 +51,14 @@ SingleStockPricesChart.prototype.init = function()
         .append('g')
         .attr('id', 'p0')
         .append('path')
-        .style('stroke', 'red')
+        .style('stroke', 'blue')
         .style('fill', 'none');
 
     self.price1 = self.svgContent
         .append('g')
         .attr('id', 'p1')
         .append('path')
-        .style('stroke', 'black')
+        .style('stroke', 'red')
         .style('fill', 'none');
 };
 
@@ -166,7 +166,6 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
 
                         g.append("g")
                             .attr("class", "y-axis")
-                            // .attr("transform", "translate(0," + self.svgHeight/2 + ")")
                             .transition().duration(3000)
                             .call(yAxis);
 
@@ -180,7 +179,6 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
 
                         g.append("g")
                             .attr("class", "y-axis")
-                            // .attr("transform", "translate(0," + self.svgHeight + ")")
                             .transition().duration(3000)
                             .call(yAxis);
 
@@ -199,7 +197,7 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .domain(d3.extent(dailyStockPrice0, function(d) { return d.Date; }));
 
                 var y0 = d3.scaleLinear()
-                    .range([self.svgHeight, self.svgHeight/2 + 10])
+                    .range([self.svgHeight/2 - 10, 10])
                     .domain([0, d3.max(dailyStockPrice0, function(d) { return d.Close; })]);
 
                 var upper = self.svgContent.append('g').attr('id', 'upper');
@@ -212,7 +210,7 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .domain(d3.extent(dailyStockPrice1, function(d) { return d.Date; }));
 
                 var y1 = d3.scaleLinear()
-                    .range([self.svgHeight/2 - 10, 10])
+                    .range([self.svgHeight, self.svgHeight/2 + 10])
                     .domain([0, d3.max(dailyStockPrice1, function(d) { return d.Close; })]);
 
                 var lower = self.svgContent.append('g').attr('id', 'lower');
@@ -412,7 +410,10 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                         return tick_position_increment*(i+1)/2+initial_position_increment
                     }
                 })
-                .attr('width', each_bar_width);
+                .attr('width', each_bar_width)
+                .classed('noData', function(d) {
+                    return d[statementType] === undefined || isNaN(d[statementType]) || d[statementType] < 0;
+                });
 
             bars.transition(t)
                 .attr('height', function (d) {
@@ -433,8 +434,6 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                     else if (i%2==0)                  { return colorScaleBlue(d[statementType]); }
                     else                              { return colorScaleRed(d[statementType]); }
                 })
-                .classed('noData', function(d) {
-                    return d[statementType] === undefined || isNaN(d[statementType]) || d[statementType] < 0; })
                 .attr("id", function(d,i) { return "bar" + i.toString() });
 
 
@@ -474,17 +473,21 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
 // Set texts's attributes //
             x_left_adjustment_ratio = 1/12;
             above_bars_texts
-                .text(function(d,i){
-                    if (isNaN(d)==true) {return "NA"}
-                    else {return parseFloat(d).toFixed(2) }
+                .attr("class", "abovebarstexts")
+                .text(function(d){
+                    if (isNaN(d)) { return "NA"; }
+                    else          { return parseFloat(d).toFixed(2); }
                 })
                 .transition(t)
                 .attr("x", function(d,i){
-                    if (i%2==0){return  x_left_adjustment_ratio* each_bar_width+ tick_position_increment*(i/2+1)-(each_bar_width- initial_position_increment)}
-                    else {return x_left_adjustment_ratio* each_bar_width+tick_position_increment*(i+1)/2+initial_position_increment}
+                    if (i%2 == 0) {
+                        return  x_left_adjustment_ratio* each_bar_width+ tick_position_increment*(i/2+1)-(each_bar_width- initial_position_increment)
+                    } else {
+                        return x_left_adjustment_ratio* each_bar_width+tick_position_increment*(i+1)/2+initial_position_increment;
+                    }
                 })
                 .attr('y', function (d,i) {
-                    if (isNaN(d)==true){return (svg_height- xAxisWidth) *2/3 }
+                    if (isNaN(d)){return (svg_height- xAxisWidth) *2/3 }
                     else {
                         if (d<0) {return svg_height - xAxisWidth}
 
@@ -496,16 +499,11 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                     }
                 })
                 .style("fill", function(d,i){
-                    if (isNaN(d)==true) {return "gray"}
-                    else {
-                        if (d<0) {return "purple"}
-                        else {
-                            if (i%2==0){return colorScaleBlue(d)}
-                            else {return colorScaleRed(d)}
-                        }
-                    }
-                })
-                .attr("class", "abovebarstexts")
+                    if      (isNaN(d)) { return "gray"; }
+                    else if (d < 0)    { return "purple"; }
+                    else if (i%2 == 0) { return colorScaleBlue(d); }
+                    else               { return colorScaleRed(d); }
+                });
         });
     });
 };
