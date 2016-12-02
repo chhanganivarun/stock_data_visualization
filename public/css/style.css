@@ -17,6 +17,10 @@ path {
     fill: none;
 }
 
+.indexOfSP {
+    fill: blue;
+}
+
 #plot-selector-0 {
     display: inline-block;
     margin-right: 20px;

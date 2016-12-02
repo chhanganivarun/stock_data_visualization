@@ -1,8 +1,3 @@
-/**
- * Constructor for the Year Chart
- *
- * @param indexOfSnP500Data data corresponding to index of S&P 500
- */
 function IndexOfSPChart(indexOfSnP500Data)
 {
     var self = this;
@@ -96,15 +91,12 @@ IndexOfSPChart.prototype.update = function()
         .attr('transform', 'translate(' + self.margin.left + ', 10)');
 
     legend.append('text')
-        .attr('class', 'chart_Name')
         .text('S&P 500');
 
-    var helper = mainPart.append('g')
-        .attr('class', 'chart_price')
-        .style('text-anchor', 'end')
-        .attr('transform', 'translate(' + self.svgWidthL + ', 100)');
-
-    var helperText = helper.append('text');
+    var helper = legend.append('text')
+        .classed('indexOfSP', true)
+        .style('text-anchor', 'start')
+        .attr('transform', 'translate(0, 20)');
 
     var focus = mainPart.append('g')
         .attr('id', 'focus-0')
@@ -129,6 +121,7 @@ IndexOfSPChart.prototype.update = function()
             d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
         focus.attr('transform', 'translate(' + x(d.Date) + ',' + y(d.Close) + ')');
 
-        helperText.text(legendFormat(d.Date) + ' - Price: ' + d.Close);
+        helper.text(legendFormat(d.Date) + ' - Price: ' + d.Close);
+        // helperText.text(legendFormat(d.Date) + ' - Price: ' + d.Close);
     }
 };

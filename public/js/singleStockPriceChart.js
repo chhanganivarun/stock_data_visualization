@@ -119,31 +119,33 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                 d.Close = +d.Close;
             });
 
+            var x0, y0, x1, y1;
+            var xExt0, xExt1, xLowerBound, xUpperBound;
+            var filteredDailyStockPrice0, filteredDailyStockPrice1;
+            var xAxis, yAxis;
 
             if (chartType === 'lines') {
-                // Set the ranges
-                var x0 = d3.scaleTime().range([0, self.svgWidthL]);
-                var y0 = d3.scaleLinear().range([self.svgHeight, 0]);
+                x0 = d3.scaleTime().range([0, self.svgWidthL]);
+                y0 = d3.scaleLinear().range([self.svgHeight, 0]);
 
                 // x axist
-                var xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
-                var xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
-
-                var xLowerBound = xExt0[0] > xExt1[0] ? xExt0[0] : xExt1[0];
-                var xUpperBound = xExt0[1] < xExt1[1] ? xExt0[1] : xExt1[1];
+                xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
+                xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
+                xLowerBound = xExt0[0] > xExt1[0] ? xExt0[0] : xExt1[0];
+                xUpperBound = xExt0[1] < xExt1[1] ? xExt0[1] : xExt1[1];
                 x0.domain([xLowerBound, xUpperBound]);
-                var filteredDailyStockPrice0 = dailyStockPrice0.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
-                var filteredDailyStockPrice1 = dailyStockPrice1.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
+
+                filteredDailyStockPrice0 = dailyStockPrice0.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
+                filteredDailyStockPrice1 = dailyStockPrice1.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
 
                 // y axist
                 var yExt0 = d3.extent(filteredDailyStockPrice0, function(d) { return d.Close; });
                 var yExt1 = d3.extent(filteredDailyStockPrice1, function(d) { return d.Close; });
-
                 var yUpperBound = yExt0[1] < yExt1[1] ? yExt1[1] : yExt0[1];
                 y0.domain([0, yUpperBound]);
 
-                var xAxis = d3.axisBottom(x0).tickSizeOuter(0).ticks(10);
-                var yAxis = d3.axisLeft(y0).tickSizeOuter(0).ticks(5);
+                xAxis = d3.axisBottom(x0).tickSizeOuter(0).ticks(10);
+                yAxis = d3.axisLeft(y0).tickSizeOuter(0).ticks(5);
 
                 self.x0
                     .transition().duration(3000)
@@ -165,14 +167,7 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .attr("transform", 'translate(0, 0)')
                     .call(yAxis);
 
-                // var valueLineInit = self.pathGenGen(x0,
-                //     d3.scaleLinear()
-                //         .range([self.svgHeight, self.svgHeight])
-                //         .domain([self.svgHeight, self.svgHeight]));
-
                 var valueLine = self.pathGenGen(x0, y0);
-                // self.price0.attr('d', valueLineInit(filteredDailyStockPrice0)).transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice0));
-                // self.price1.attr('d', valueLineInit(filteredDailyStockPrice0)).transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice1));
                 self.price0.transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice0));
                 self.price1.transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice1));
             } else if ( chartType == 'separate') {
@@ -209,28 +204,28 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     }
                 }
 
-                var x0 = d3.scaleTime()
+                x0 = d3.scaleTime()
                     .range([0, self.svgWidthL])
                     .domain(d3.extent(dailyStockPrice0, function(d) { return d.Date; }));
 
-                var y0 = d3.scaleLinear()
+                y0 = d3.scaleLinear()
                     .range([self.svgHeight/2 - 10, 10])
                     .domain([0, d3.max(dailyStockPrice0, function(d) { return d.Close; })]);
 
                 oneLine0('upper', dailyStockPrice0, x0, y0);
 
-                var x1 = d3.scaleTime()
+                x1 = d3.scaleTime()
                     .range([0, self.svgWidthL])
                     .domain(d3.extent(dailyStockPrice1, function(d) { return d.Date; }));
 
-                var y1 = d3.scaleLinear()
+                y1 = d3.scaleLinear()
                     .range([self.svgHeight, self.svgHeight/2 + 10])
                     .domain([0, d3.max(dailyStockPrice1, function(d) { return d.Close; })]);
 
                 oneLine0('lower', dailyStockPrice1, x1, y1);
             } else if ( chartType == 'normalized') {
                 function oneLine1(gid, data, x, y) {
-                    var xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
+                    xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
                     var valueLine = self.pathGenGen(x, y);
 
                     if (gid == 'upper') {
@@ -255,7 +250,6 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                             .attr("transform", 'translate(' + self.svgWidthL + ', 0)')
                             .attr('text-anchor', 'start')
                             .call(d3.axisRight(y).tickSizeOuter(0).ticks(5));
-                            // .attr('text-anchor', 'start');
 
                         self.price1.transition().duration(3000).attr('d', valueLine(data));
                     }
@@ -264,22 +258,22 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                 var xCommon = d3.scaleTime().range([0, self.svgWidthL]);
 
                 // x axist
-                var xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
-                var xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
+                xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
+                xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
 
-                var xLowerBound = xExt0[0] > xExt1[0] ? xExt0[0] : xExt1[0];
-                var xUpperBound = xExt0[1] < xExt1[1] ? xExt0[1] : xExt1[1];
+                xLowerBound = xExt0[0] > xExt1[0] ? xExt0[0] : xExt1[0];
+                xUpperBound = xExt0[1] < xExt1[1] ? xExt0[1] : xExt1[1];
                 xCommon.domain([xLowerBound, xUpperBound]);
-                var filteredDailyStockPrice0 = dailyStockPrice0.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
-                var filteredDailyStockPrice1 = dailyStockPrice1.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
+                filteredDailyStockPrice0 = dailyStockPrice0.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
+                filteredDailyStockPrice1 = dailyStockPrice1.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
 
-                var y0 = d3.scaleLinear()
+                y0 = d3.scaleLinear()
                     .range([self.svgHeight, 0])
                     .domain([0, d3.max(filteredDailyStockPrice0, function(d) { return d.Close; })]);
 
                 oneLine1('upper', filteredDailyStockPrice0, xCommon, y0);
 
-                var y1 = d3.scaleLinear()
+                y1 = d3.scaleLinear()
                     .range([self.svgHeight, 0])
                     .domain([0, d3.max(filteredDailyStockPrice1, function(d) { return d.Close; })]);
 
@@ -288,6 +282,7 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
         });
     });
 };
+
 
 SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, ticker1, statementType)
 {
