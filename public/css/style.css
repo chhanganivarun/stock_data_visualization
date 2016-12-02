@@ -173,19 +173,23 @@ h3{
 
 /* ------------------ */
 
+path {
+    fill: none;
+}
+
 #plot-selector-0 {
-    display:inline-block;
-    margin-right:20px;
+    display: inline-block;
+    margin-right: 20px;
 }
 
 #plot-selector-1 {
-    display:inline-block;
-    margin-right:50px;
+    display: inline-block;
+    margin-right: 50px;
 }
 
 
 #chart-type-selector {
-    display:inline-block;
+    display: inline-block;
 }
 
 .focus circle {
@@ -199,13 +203,13 @@ h3{
 }
 
 .contentL {
-    display: inline-block;
-    width: 70%;
+    float: left;
+    width: 70%
 }
 
 .contentR {
-    display: inline-block;
-    width: 30%;
+    float: right;
+    width: 30%
 }
 
 .barText{

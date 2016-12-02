@@ -6,11 +6,9 @@
     <title>Visualization - Project</title>
     <link rel="stylesheet" href="public/css/style.css"/>
     <!--<script src="https://d3js.org/d3.v4.min.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script type="text/javascript" src="bower_components/d3/d3.js"></script>
     <script type="text/javascript" src="bower_components/d3-tip/index.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.9.0/d3-legend.js"></script>
-    <script type="text/javascript" src="http://techanjs.org/techan.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Arvo" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 </head>
@@ -27,7 +25,7 @@
 
 
 <div>
-    <div id = "two-stocks" style="float: left; width: 70%">
+    <div id = "two-stocks">
         <div id="comparison-chart" class="view">
             <div id="selectors">
                 <div id="plot-selector-0">
@@ -55,7 +53,7 @@
     </div>
 
 
-    <div id="statementsDiv" style="float: right; width: 30%" >
+    <div id="statementsDiv">
         <div id="labelsSelector">
             <label>Financial  Labels</label>
             <!--<select id="statementsSelect" onchange="labelSelection()">-->
@@ -76,22 +74,12 @@
             </select>
         </div>
         <svg width="600" height="450" id="statementsSvg">
-            <g id="statmentsContent">
-                <g id="bars"></g>
-                <g id="texts"></g>
-                <g id="yAxis"></g>
-                <g id="xAxis"></g>
-            </g>
         </svg>
-
-
     </div>
 </div>
 
 <script type="application/javascript" src="public/js/singleStockPriceChart.js"></script>
 <script type="application/javascript" src="public/js/indexOfSPChart.js"></script>
-<!--<script type="application/javascript" src="public/js/statements.js"></script>-->
-<!--<script type="application/javascript" src="public/js/shiftChart.js"></script>-->
 <script type="application/javascript" src="public/js/main.js"></script>
 </body>
 </html>
