@@ -12,11 +12,10 @@
 
     function init() {
         d3.csv('data/S&P500Index.csv', function (error, indexOfSnP500Data) {
-            var indexOfSnP500Chart = new IndexOfSPChart(indexOfSnP500Data);
-            indexOfSnP500Chart.update();
-        });
+            var indexOfSnP500Chart = new IndexOfSPChart();
+            // indexOfSnP500Chart.update(indexOfSnP500Data);
 
-        var singleStockPricesChart = new SingleStockPricesChart();
+        var singleStockPricesChart = new SingleStockPricesChart(indexOfSnP500Chart);
 
         d3.text('data/tickers.txt',
             function(error, content)
@@ -42,6 +41,7 @@
 
                 singleStockPricesChart.chooseData();
             });
+        });
     }
 
     /**

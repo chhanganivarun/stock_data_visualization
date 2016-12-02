@@ -1,6 +1,8 @@
-function SingleStockPricesChart()
+function SingleStockPricesChart(indexOfSnP500Chart)
 {
     var self = this;
+
+    self.indexOfSnP500Chart = indexOfSnP500Chart;
     self.init();
 }
 
@@ -120,17 +122,21 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
             });
 
             var x0, y0, x1, y1;
-            var xExt0, xExt1, xLowerBound, xUpperBound;
+            var xLowerBound, xUpperBound;
+            var xLowerBoundPrime, xUpperBoundPrime;
             var filteredDailyStockPrice0, filteredDailyStockPrice1;
             var xAxis, yAxis;
+
+            var xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
+            var xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
 
             if (chartType === 'lines') {
                 x0 = d3.scaleTime().range([0, self.svgWidthL]);
                 y0 = d3.scaleLinear().range([self.svgHeight, 0]);
 
                 // x axist
-                xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
-                xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
+                // xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
+                // xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
                 xLowerBound = xExt0[0] > xExt1[0] ? xExt0[0] : xExt1[0];
                 xUpperBound = xExt0[1] < xExt1[1] ? xExt0[1] : xExt1[1];
                 x0.domain([xLowerBound, xUpperBound]);
@@ -170,8 +176,20 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                 var valueLine = self.pathGenGen(x0, y0);
                 self.price0.transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice0));
                 self.price1.transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice1));
+                d3.csv('data/S&P500Index.csv', function (error, indexOfSnP500Data) {
+                    self.indexOfSnP500Chart.update(indexOfSnP500Data.filter(function(d) {
+                        var parseDate = d3.timeParse('%Y-%m-%d');
+                        var date = parseDate(d.Date);
+                        return date >= xLowerBound && date <= xUpperBound;
+                    }))
+                });
             } else if ( chartType == 'separate') {
                 function oneLine0(gid, data, x, y) {
+                    // xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
+                    // xExt1 = d3.extent(dailyStockPrice1, function(d) { return d.Date; });
+                    xLowerBoundPrime = xExt0[0] < xExt1[0] ? xExt0[0] : xExt1[0];
+                    xUpperBoundPrime = xExt0[1] > xExt1[1] ? xExt0[1] : xExt1[1];
+
                     var xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
                     var yAxis = d3.axisLeft(y).tickSizeOuter(0).ticks(5);
 
@@ -223,6 +241,14 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .domain([0, d3.max(dailyStockPrice1, function(d) { return d.Close; })]);
 
                 oneLine0('lower', dailyStockPrice1, x1, y1);
+
+                d3.csv('data/S&P500Index.csv', function (error, indexOfSnP500Data) {
+                    self.indexOfSnP500Chart.update(indexOfSnP500Data.filter(function(d) {
+                        var parseDate = d3.timeParse('%Y-%m-%d');
+                        var date = parseDate(d.Date);
+                        return date >= xLowerBoundPrime && date <= xUpperBoundPrime;
+                    }))
+                });
             } else if ( chartType == 'normalized') {
                 function oneLine1(gid, data, x, y) {
                     xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
@@ -278,6 +304,14 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .domain([0, d3.max(filteredDailyStockPrice1, function(d) { return d.Close; })]);
 
                 oneLine1('lower', filteredDailyStockPrice1, xCommon, y1);
+
+                d3.csv('data/S&P500Index.csv', function (error, indexOfSnP500Data) {
+                    self.indexOfSnP500Chart.update(indexOfSnP500Data.filter(function(d) {
+                        var parseDate = d3.timeParse('%Y-%m-%d');
+                        var date = parseDate(d.Date);
+                        return date >= xLowerBound && date <= xUpperBound;
+                    }))
+                });
             }
         });
     });
