@@ -10,13 +10,10 @@ function IndexOfSPChart(indexOfSnP500Data)
     self.init();
 }
 
-/**
- * Initializes the svg elements required for this chart
- */
+
 IndexOfSPChart.prototype.init = function()
 {
     var self = this;
-    // self.margin = {top: 10, right: 100, bottom: 30, left: 100};
     self.margin = {top: 10, right: 100, bottom: 30, left: 50};
     var divyearChart = d3.select("#index-of-SP500-chart").classed("fullView", true);
 
@@ -31,9 +28,7 @@ IndexOfSPChart.prototype.init = function()
         .attr('height', self.svgHeight + self.margin.top + self.margin.bottom)
 };
 
-/**
- * Creates a chart with circles representing each election year, populates text content and other required elements for the Year Chart
- */
+
 IndexOfSPChart.prototype.update = function()
 {
     var self = this;
@@ -71,7 +66,8 @@ IndexOfSPChart.prototype.update = function()
         .x(function(d) { return x(d.Date); })
         .y(function() { return y(0); });
 
-    var mainPart = self.svg.append('g').attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
+    var mainPart = self.svg.append('g')
+        .attr("transform", "translate(" + self.margin.left + "," + self.margin.top + ")");
 
     self.price = mainPart.append('path')
         .attr('class', 'line')
@@ -80,18 +76,17 @@ IndexOfSPChart.prototype.update = function()
         .style('stroke', 'steelblue');
 
     self.price
-        .transition().duration(3000)
         .attr('d', valueLine(self.indexOfSnP500Data));
 
     // Add the X Axis
     mainPart.append('g')
-        .attr('class', 'x axis')
+        .attr('class', 'x-Axis')
         .attr('transform', 'translate(0,' + self.svgHeight + ')')
         .call(xAxis);
 
     // Add the Y Axis
     mainPart.append('g')
-        .attr('class', 'y axis')
+        .attr('class', 'y-Axis')
         .call(yAxis);
 
     var legend = mainPart.append('g')
@@ -117,9 +112,9 @@ IndexOfSPChart.prototype.update = function()
         .style('display', 'none');
 
     focus
+        .classed('focus', true)
         .append('circle')
-        .attr('r', '5')
-        .classed('focus', true);
+        .attr('r', '5');
 
     self.svg
         .on('mouseover', function() { focus.style('display', null); })

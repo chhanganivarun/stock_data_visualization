@@ -10,17 +10,8 @@
 (function(){
     var instance = null;
 
-    /**
-     * Creates instances for every chart (classes created to handle each chart;
-     * the classes are defined in the respective javascript files.
-     */
     function init() {
-        //Creating instances for each visualization
-
-        //load the data corresponding to all the election years
-        //pass this data and instances of all the charts that update on year selection to yearChart's constructor
         d3.csv('data/S&P500Index.csv', function (error, indexOfSnP500Data) {
-            //pass the instances of all the charts that update on selection change in IndexOfSPChart
             var indexOfSnP500Chart = new IndexOfSPChart(indexOfSnP500Data);
             indexOfSnP500Chart.update();
         });
@@ -42,13 +33,11 @@
                         .text(function(d) { return d; })
                         .property("selected",
                             function(d) { return defaultOptionName[i] === d; });
-
                 }
 
                 d3.select('#dataset-0').on('change', function() {singleStockPricesChart.chooseData();});
                 d3.select('#dataset-1').on('change', function() {singleStockPricesChart.chooseData();});
                 d3.select('#types').on('change', function() {singleStockPricesChart.chooseData();});
-
                 d3.select('#statementsSelect').on('change', function() {singleStockPricesChart.chooseData();});
 
                 singleStockPricesChart.chooseData();
@@ -67,7 +56,7 @@
 
     /**
      *
-     * @returns {Main singleton class |*}
+     * @returns Main singleton class
      */
     Main.getInstance = function(){
         var self = this;

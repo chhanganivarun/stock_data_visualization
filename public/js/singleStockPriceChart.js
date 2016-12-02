@@ -8,7 +8,8 @@ SingleStockPricesChart.prototype.init = function()
 {
     var self = this;
 
-    // path generator generator :-)
+    // I. Useful functions
+    //// path generator generator :-)
     self.pathGenGen = function(xScl, yScl) {
         return d3.line()
             .x(function(d) { return xScl(d.Date); })
@@ -17,11 +18,11 @@ SingleStockPricesChart.prototype.init = function()
 
     self.parseDate = d3.timeParse('%Y%m%d');  // yyyymmdd
 
-    // Layout related
+    // II. Layout related
     self.margin = {top: 15, right: 100, bottom: 20, left: 50};
     self.svgHeight = 420;
 
-    // 1. Left div
+    //// 1. Left div
     var stockPricesDiv = d3.select('#two-stocks').classed('contentL', true);
     self.svgBoundsL = stockPricesDiv.node().getBoundingClientRect();
     self.svgWidthL = self.svgBoundsL.width - self.margin.left - self.margin.right;
@@ -42,7 +43,7 @@ SingleStockPricesChart.prototype.init = function()
         .append('g')
         .attr('id', function(d) { return d; });
 
-    // 2. Right div
+    //// 2. Right div
     var divStatements = d3.select('#statementsDiv').classed('contentR', true);
     self.svgBoundsR = divStatements.node().getBoundingClientRect();
     self.svgWidthR = self.svgBoundsR.width - self.margin.left - self.margin.right;
@@ -64,26 +65,35 @@ SingleStockPricesChart.prototype.init = function()
         .append('g')
         .attr('id', function(d) { return d; });
 
-    // // Add path.
+    // III. Useful instance attributes
     self.price0 = self.svgContentL.select('#p0')
         .append('path')
-        .style('stroke', 'blue');
+        .style('stroke', 'blue')
+        .attr('d', 'M 0.5 0 V 0.5 H 1333.22 V 0');
+
 
     self.price1 = self.svgContentL.select('#p1')
         .append('path')
-        .style('stroke', 'red');
+        .style('stroke', 'red')
+        .attr('d', 'M 0.5 0 V 0.5 H 1333.22 V 0');
 
-    // Initial View!
+    self.x0 = self.svgContentL.select('#x0');
+    self.y0 = self.svgContentL.select('#y0');
+    self.x1 = self.svgContentL.select('#x1');
+    self.y1 = self.svgContentL.select('#y1');
+
+    // IV. Initial View!
     self.updatePrices('aapl', 'goog', 'lines');
     self.updateFinantialStatements('aapl', 'goog', 'CASH_RATIO');
 };
 
 
 /**
- * Creates Prices Chart, the stock prices of two companies
+ * Creates Prices Chart, and the stock prices of two companies will show up.
  *
- // * @param electionResult election data for the year selected
- // * @param colorScale global quantile scale based on the winning margin between republicans and democrats
+ // * @param ticker0
+ // * @param ticker1
+ // * @param chartType: this can be "lines", "separate", "normalized"
  */
 SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chartType)
 {
@@ -94,11 +104,9 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
     self.oldChartType = chartType;
 
     d3.text('./data/daily/table_'+ticker0+'.csv', function(error0, text0) {
-        // Date	Open	High	Low	Close	Adj Close*	Volume
-        var dailyStockPrice0 = d3.csvParseRows(text0, function (d) { return {'Date': d[0], 'Close': d[5]}; });
-
         d3.text('./data/daily/table_'+ticker1+'.csv', function(error1, text1) {
             // Date	Open	High	Low	Close	Adj Close*	Volume
+            var dailyStockPrice0 = d3.csvParseRows(text0, function (d) { return {'Date': d[0], 'Close': d[5]}; });
             var dailyStockPrice1 = d3.csvParseRows(text1, function (d) { return {'Date': d[0], 'Close': d[5]}; });
 
             dailyStockPrice0.forEach(function(d) {
@@ -114,8 +122,8 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
 
             if (chartType === 'lines') {
                 // Set the ranges
-                var x = d3.scaleTime().range([0, self.svgWidthL]);
-                var y = d3.scaleLinear().range([self.svgHeight, 0]);
+                var x0 = d3.scaleTime().range([0, self.svgWidthL]);
+                var y0 = d3.scaleLinear().range([self.svgHeight, 0]);
 
                 // x axist
                 var xExt0 = d3.extent(dailyStockPrice0, function(d) { return d.Date; });
@@ -123,7 +131,7 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
 
                 var xLowerBound = xExt0[0] > xExt1[0] ? xExt0[0] : xExt1[0];
                 var xUpperBound = xExt0[1] < xExt1[1] ? xExt0[1] : xExt1[1];
-                x.domain([xLowerBound, xUpperBound]);
+                x0.domain([xLowerBound, xUpperBound]);
                 var filteredDailyStockPrice0 = dailyStockPrice0.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
                 var filteredDailyStockPrice1 = dailyStockPrice1.filter(function(d) { return d.Date >= xLowerBound && d.Date <= xUpperBound; });
 
@@ -132,85 +140,74 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                 var yExt1 = d3.extent(filteredDailyStockPrice1, function(d) { return d.Close; });
 
                 var yUpperBound = yExt0[1] < yExt1[1] ? yExt1[1] : yExt0[1];
-                y.domain([0, yUpperBound]);
+                y0.domain([0, yUpperBound]);
 
+                var xAxis = d3.axisBottom(x0).tickSizeOuter(0).ticks(10);
+                var yAxis = d3.axisLeft(y0).tickSizeOuter(0).ticks(5);
 
-                // Remove the X Axis
-                self.svgContentL.selectAll('.x-axis').remove();
-                // Remove the Y Axis
-                self.svgContentL.selectAll('.y-axis').remove();
-
-                var xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
-                var yAxis = d3.axisLeft(y).tickSizeOuter(0).ticks(5);
-
-                self.svgContentL.append('g')
-                    .attr('class', 'x-axis')
-                    .attr('id', 'x')
+                self.x0
+                    .transition().duration(3000)
                     .attr('transform', 'translate(0,' + self.svgHeight + ')')
-                    // .transition().duration(3000)
                     .call(xAxis);
 
-                self.svgContentL.append('g')
-                    .attr('class', 'y-axis')
-                    .attr('id', 'y')
-                    // .transition().duration(3000)
+                self.y0
+                    .transition().duration(3000)
                     .call(yAxis);
 
-                var valueLineInit = self.pathGenGen(x,
-                    d3.scaleLinear()
-                        .range([self.svgHeight, self.svgHeight])
-                        .domain([self.svgHeight, self.svgHeight]));
+                self.x1
+                    .attr('transform', 'translate(0,' + self.svgHeight + ')')
+                    .transition().duration(3000)
+                    .call(xAxis);
 
-                var valueLine = self.pathGenGen(x, y);
-                self.price0.attr('d', valueLineInit(filteredDailyStockPrice0)).transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice0));
-                self.price1.attr('d', valueLineInit(filteredDailyStockPrice0)).transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice1));
+                self.y1
+                    .attr('text-anchor', 'end')
+                    .transition().duration(3000)
+                    .attr("transform", 'translate(0, 0)')
+                    .call(yAxis);
+
+                // var valueLineInit = self.pathGenGen(x0,
+                //     d3.scaleLinear()
+                //         .range([self.svgHeight, self.svgHeight])
+                //         .domain([self.svgHeight, self.svgHeight]));
+
+                var valueLine = self.pathGenGen(x0, y0);
+                // self.price0.attr('d', valueLineInit(filteredDailyStockPrice0)).transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice0));
+                // self.price1.attr('d', valueLineInit(filteredDailyStockPrice0)).transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice1));
+                self.price0.transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice0));
+                self.price1.transition().duration(3000).attr('d', valueLine(filteredDailyStockPrice1));
             } else if ( chartType == 'separate') {
-                function oneLine(gid, data, x, y) {
-                    var g = d3.select('#' + gid);
-                    // Remove the X Axis
-                    g.selectAll('.x-axis').remove();
-                    // Remove the Y Axis
-                    g.selectAll('.y-axis').remove();
-
+                function oneLine0(gid, data, x, y) {
                     var xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
                     var yAxis = d3.axisLeft(y).tickSizeOuter(0).ticks(5);
 
                     var valueLine = self.pathGenGen(x, y);
 
                     if (gid == 'upper') {
-                        g.append("g")
-                            .attr("class", "x-axis")
-                            .attr("transform", "translate(0," + (self.svgHeight/2 - 10) + ")")
+                        self.x0
                             .transition().duration(3000)
+                            .attr("transform", "translate(0," + (self.svgHeight/2 - 10) + ")")
                             .call(xAxis);
 
-                        g.append("g")
-                            .attr("class", "y-axis")
+                        self.y0
                             .transition().duration(3000)
                             .call(yAxis);
 
                         self.price0.transition().duration(3000).attr('d', valueLine(data));
                     } else {
-                        g.append("g")
-                            .attr("class", "x-axis")
-                            .attr("transform", "translate(0," + self.svgHeight + ")")
+                        self.x1
                             .transition().duration(3000)
+                            .attr("transform", "translate(0," + self.svgHeight + ")")
                             .call(xAxis);
 
-                        g.append("g")
-                            .attr("class", "y-axis")
+                        self.y1
+                            .attr('text-anchor', 'end')
                             .transition().duration(3000)
+                            .attr("transform", 'translate(0, 0)')
                             .call(yAxis);
 
                         self.price1.transition().duration(3000).attr('d', valueLine(data));
                     }
-
                 }
-
-                self.svgContentL.selectAll('.x-axis').remove();
-                self.svgContentL.selectAll('.y-axis').remove();
-                self.svgContentL.select('#upper').remove();
-                self.svgContentL.select('#lower').remove();
 
                 var x0 = d3.scaleTime()
                     .range([0, self.svgWidthL])
@@ -220,10 +217,7 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .range([self.svgHeight/2 - 10, 10])
                     .domain([0, d3.max(dailyStockPrice0, function(d) { return d.Close; })]);
 
-                var upper = self.svgContentL.append('g').attr('id', 'upper');
-                oneLine('upper', dailyStockPrice0, x0, y0);
-
-                console.log('hi');
+                oneLine0('upper', dailyStockPrice0, x0, y0);
 
                 var x1 = d3.scaleTime()
                     .range([0, self.svgWidthL])
@@ -233,62 +227,39 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .range([self.svgHeight, self.svgHeight/2 + 10])
                     .domain([0, d3.max(dailyStockPrice1, function(d) { return d.Close; })]);
 
-                var lower = self.svgContentL.append('g').attr('id', 'lower');
-                oneLine('lower', dailyStockPrice1, x1, y1);
+                oneLine0('lower', dailyStockPrice1, x1, y1);
             } else if ( chartType == 'normalized') {
-                function oneLine(gid, data, x, y, yTickDirection) {
-                    var g = d3.select('#' + gid);
-                    // Remove the X Axis
-                    g.selectAll('.x-axis').remove();
-                    // Remove the Y Axis
-                    g.selectAll('.y-axis').remove();
-
+                function oneLine1(gid, data, x, y) {
                     var xAxis = d3.axisBottom(x).tickSizeOuter(0).ticks(10);
-                    var yAxis;
-                    // var yAxis = d3.axisLeft(y).tickSizeOuter(0).ticks(5);
-                    if (yTickDirection === 'right') {
-                        yAxis = d3.axisRight(y).tickSizeOuter(0).ticks(5);
-                    } else {
-                        yAxis = d3.axisLeft(y).tickSizeOuter(0).ticks(5);
-                    }
-
                     var valueLine = self.pathGenGen(x, y);
 
                     if (gid == 'upper') {
-                        g.append("g")
-                            .attr("class", "x-axis")
-                            .attr("transform", "translate(0," + self.svgHeight + ")")
+                        self.x0
                             .transition().duration(3000)
+                            .attr("transform", "translate(0," + self.svgHeight + ")")
                             .call(xAxis);
 
-                        g.append("g")
-                            .attr("class", "y-axis")
-                            // .attr("transform", 'translate(' + self.svgWidth + ', 0)')
+                        self.y0
                             .transition().duration(3000)
-                            .call(yAxis);
+                            .call(d3.axisLeft(y).tickSizeOuter(0).ticks(5));
 
                         self.price0.transition().duration(3000).attr('d', valueLine(data));
                     } else {
-                        g.append("g")
-                            .attr("class", "x-axis")
-                            .attr("transform", "translate(0," + self.svgHeight + ")")
+                        self.x1
                             .transition().duration(3000)
+                            .attr("transform", "translate(0," + self.svgHeight + ")")
                             .call(xAxis);
 
-                        g.append("g")
-                            .attr("class", "y-axis")
-                            .attr("transform", 'translate(' + self.svgWidthL + ', 0)')
+                        self.y1
                             .transition().duration(3000)
-                            .call(yAxis);
+                            .attr("transform", 'translate(' + self.svgWidthL + ', 0)')
+                            .attr('text-anchor', 'start')
+                            .call(d3.axisRight(y).tickSizeOuter(0).ticks(5));
+                            // .attr('text-anchor', 'start');
 
                         self.price1.transition().duration(3000).attr('d', valueLine(data));
                     }
                 }
-
-                self.svgContentL.selectAll('.x-axis').remove();
-                self.svgContentL.selectAll('.y-axis').remove();
-                self.svgContentL.select('#upper').remove();
-                self.svgContentL.select('#lower').remove();
 
                 var xCommon = d3.scaleTime().range([0, self.svgWidthL]);
 
@@ -306,16 +277,13 @@ SingleStockPricesChart.prototype.updatePrices = function(ticker0, ticker1, chart
                     .range([self.svgHeight, 0])
                     .domain([0, d3.max(filteredDailyStockPrice0, function(d) { return d.Close; })]);
 
-                var upper = self.svgContentL.append('g').attr('id', 'upper');
-                oneLine('upper', filteredDailyStockPrice0, xCommon, y0);
-
+                oneLine1('upper', filteredDailyStockPrice0, xCommon, y0);
 
                 var y1 = d3.scaleLinear()
                     .range([self.svgHeight, 0])
                     .domain([0, d3.max(filteredDailyStockPrice1, function(d) { return d.Close; })]);
 
-                var lower = self.svgContentL.append('g').attr('id', 'lower');
-                oneLine('lower', filteredDailyStockPrice1, xCommon, y1, 'right');
+                oneLine1('lower', filteredDailyStockPrice1, xCommon, y1);
             }
         });
     });
@@ -336,11 +304,6 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
             statements_svg = statementsDiv.select("#statementsSvg");
             statements_svg_bars_group = statements_svg.select("#bars");
 
-            // We construct the bounds
-            var svgBounds = d3.select("#statementsSvg").node().getBoundingClientRect();
-            var svg_width = statements_svg.attr("width");
-
-
             // Choose the max and min of the y-axis labels to rescale the yaxis
             var maxValue = d3.max(data_combined, function (d) { return parseFloat(d[statementType]); });
 
@@ -357,26 +320,11 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
             // Define Transitions
             var t = d3.transition().duration(2000);
 
-            // Define x and y Scales, and x,y Axes
-            var y_extension = 1.05;
-            // console.log([svgBounds.height - xAxisWidth, 0]);
-
             var yScale = d3.scaleLinear()
-            // .domain([0, maxValue]).range([svgBounds.height, 0]);
                 .domain([0, maxValue]).range([self.svgHeight, 0]);
 
             var xScale = d3.scaleBand()
-            // .domain([2011,2012,2013,2014,2015]).range([0, svgBounds.width]).padding(0);
-                .domain([2011,2012,2013,2014,2015]).range([0, self.svgWidthR]).padding(0);  // ###
-
-
-            // var yScale = d3.scaleLinear()
-            //     // .domain([0, y_extension * maxValue]).range([svgBounds.height - xAxisWidth, 0]);
-            // .domain([0, y_extension * maxValue]).range([svgBounds.height, 0]);
-            //
-            // var xScale = d3.scaleBand()
-            //     // .domain([2015,2014,2013,2012,2011]).range([svgBounds.width, yAxisHeight]).padding(0);
-            // .domain([2015,2014,2013,2012,2011]).range([svgBounds.width, 0]).padding(0);
+                .domain([2011,2012,2013,2014,2015]).range([0, self.svgWidthR]);
 
             var xAxis = d3.axisBottom()
                 .scale(xScale)
@@ -387,25 +335,17 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                 .scale(yScale)
                 .tickSizeOuter(0);
 
-            // Define the padding for the x-axis for the ticks to appear
-            var padding = 100;
-
             // Now we plot them in the picture by calling x and y axes
-            //  statements_svg.select("#xAxis")
             self.svgContentR.select("#xAxis")
                 .attr("transform", "translate(0,"+self.svgHeight+")")
                 .call(xAxis);
 
-            // statements_svg.select("#yAxis")
             self.svgContentR.select("#yAxis")
-            // .attr("transform", "translate(" + yAxisHeight + ",0)")
                 .transition(t)
                 .call(yAxis);
 
 
-            // Select the select button (whose id="statementsSelect") in the statements Div
             statements_select = statementsDiv.select("#statementsSelect");
-            // console.log(statements_select);
 
             // Add Names to the Select Button. Manually Constuct All the options.
             attrs_to_show = ["Cash Ratio",
@@ -428,7 +368,6 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
             barWidth = q * bars_total_x_space / (data_combined.length);
 
             // Define two quantities for adjustments for bars in the svg //
-            // var tick_position_increment = svg_width / leftData.length;
             var tickPosInc = self.svgWidthR / leftData.length;
             var initPosShift = -(tickPosInc / 2);
 
@@ -506,11 +445,11 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                 })
                 .merge(above_bars_texts);
 
-            // Now exit and remove //
+            // Now exit and remove
             above_bars_texts.exit().remove();
 
-            // Set texts's attributes //
-            x_left_adjustment_ratio = 1/9;
+            // Set texts's attributes
+            var x_left_adjustment_ratio = 1/9;
             above_bars_texts
                 .attr("class", "barText")
                 .text(function(d) {
@@ -538,8 +477,6 @@ SingleStockPricesChart.prototype.updateFinantialStatements = function(ticker0, t
                 });
         });
     });
-
-
 };
 
 
