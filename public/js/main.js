@@ -45,13 +45,13 @@
 
                 }
 
-                // singleStockPricesChart.update('appl', 'goog', 'line-chart');
-
                 d3.select('#dataset-0').on('change', function() {singleStockPricesChart.chooseData();});
                 d3.select('#dataset-1').on('change', function() {singleStockPricesChart.chooseData();});
                 d3.select('#types').on('change', function() {singleStockPricesChart.chooseData();});
 
                 d3.select('#statementsSelect').on('change', function() {singleStockPricesChart.chooseData();});
+
+                singleStockPricesChart.chooseData();
             });
     }
 

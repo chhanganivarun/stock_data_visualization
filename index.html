@@ -27,16 +27,16 @@
 
 
 <div>
-    <div id = "two-stocks" style="float:left;">
+    <div id = "two-stocks" style="float: left; width: 70%">
         <div id="comparison-chart" class="view">
             <div id="selectors">
                 <div id="plot-selector-0">
-                    <label>Ticker-1:</label>
+                    <label>Ticker-1 (blue):</label>
                     <select id="dataset-0"></select>
                 </div>
 
                 <div id="plot-selector-1">
-                    <label>Ticker-2:</label>
+                    <label>Ticker-2 (red):</label>
                     <select id="dataset-1"></select>
                 </div>
 
@@ -55,7 +55,7 @@
     </div>
 
 
-    <div id="statementsDiv" style="float:right;">
+    <div id="statementsDiv" style="float: right; width: 30%" >
         <div id="labelsSelector">
             <label>Financial  Labels</label>
             <!--<select id="statementsSelect" onchange="labelSelection()">-->
@@ -76,10 +76,12 @@
             </select>
         </div>
         <svg width="600" height="450" id="statementsSvg">
-            <g id="bars"></g>
-            <g id="texts"></g>
-            <g id="yAxis"></g>
-            <g id="xAxis"></g>
+            <g id="statmentsContent">
+                <g id="bars"></g>
+                <g id="texts"></g>
+                <g id="yAxis"></g>
+                <g id="xAxis"></g>
+            </g>
         </svg>
 
 
